@@ -1,0 +1,32 @@
+app:
+  name: jetson-ai-worker
+  environment: dev
+  log_level: INFO
+
+aws:
+  region: us-east-1
+
+  sqs:
+    queue_url: https://sqs.us-east-1.amazonaws.com/123456789012/edge-ai-demo-queue
+    wait_time_seconds: 10
+    max_messages: 1
+
+  s3:
+    bucket_name: edge-ai-phedit-demo-raw-images
+    download_dir: /tmp
+
+  api:
+    endpoint: https://abcd1234.execute-api.us-east-1.amazonaws.com/prod/metadata
+    timeout_seconds: 5
+
+inference:
+  model_path: /app/models/yolov8n.pt
+  device: cuda
+  confidence_threshold: 0.25
+  iou_threshold: 0.45
+  max_detections: 20
+
+worker:
+  delete_message_on_success: true
+  retry_on_failure: false
+  sleep_seconds: 1

@@ -1,7 +1,7 @@
 import yaml
 import os
 
-def load_config(path="../config.yaml"):
+def load_config(path="./config.yaml"):
     with open(path, "r") as f:
         config = yaml.safe_load(f)
 

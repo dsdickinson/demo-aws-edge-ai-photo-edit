@@ -33,12 +33,15 @@ class JetsonWorker:
         tags = self.inference.run(local_path)
         title = f"{tags[0].title()}"
         description = f"A fine art wildlife photograph featuring {', '.join(tags)}."
+        inference_time = "XXX"
+        gpu_available = "XXX"
+        status = "XXX"
 
         metadata = {
             "image_id": image_key,
             "title": title,
             "description": description,
-            "tags": tags
+            "tags": tags,
             "inference_time_ms": inference_time,
             "gpu": gpu_available,
             "status": status

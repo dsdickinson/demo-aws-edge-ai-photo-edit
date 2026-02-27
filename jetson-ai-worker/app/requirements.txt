@@ -1,5 +1,9 @@
 boto3
+botocore[crt]
 pyyaml
 requests
 torch
 ultralytics
+pytest
+pytest-mock
+moto

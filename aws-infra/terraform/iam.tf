@@ -28,7 +28,7 @@ resource "aws_iam_policy" "dynamodb_write" {
       Action = [
         "dynamodb:PutItem"
       ]
-      Resource = aws_dynamodb_table.metadata.arn
+      Resource = aws_dynamodb_table.image_metadata.arn
     }]
   })
 }

@@ -1,9 +1,9 @@
-FROM nvcr.io/nvidia/l4t-pytorch:r35.3.1
+FROM nvcr.io/nvidia/pytorch:24.08-py3-igpu
 
-WORKDIR /app
-COPY . .
+WORKDIR /
+COPY app /app
 
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip install -r /app/requirements.txt
 
-CMD ["python3", "app/main.py"]
+CMD ["python3", "/app/main.py"]

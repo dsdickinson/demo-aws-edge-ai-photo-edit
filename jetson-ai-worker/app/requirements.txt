@@ -7,3 +7,5 @@ ultralytics
 pytest
 pytest-mock
 moto
+numpy<2.0
+opencv-python==4.8.0.74

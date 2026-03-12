@@ -7,7 +7,7 @@ aws:
   region: us-east-1
 
   sqs:
-    queue_url: https://sqs.us-east-1.amazonaws.com/123456789012/edge-ai-demo-queue
+    queue_url: https://sqs.us-east-1.amazonaws.com/015283627155/edge-ai-phedit-demo-queue
     wait_time_seconds: 10
     max_messages: 1
 
@@ -16,7 +16,7 @@ aws:
     download_dir: /tmp
 
   api:
-    endpoint: https://abcd1234.execute-api.us-east-1.amazonaws.com/prod/metadata
+    endpoint: https://sg1ubi1o8i.execute-api.us-east-1.amazonaws.com
     timeout_seconds: 5
 
 inference:

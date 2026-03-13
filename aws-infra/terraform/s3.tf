@@ -18,7 +18,7 @@ resource "aws_s3_bucket_notification" "photo_upload_event" {
   bucket = aws_s3_bucket.raw_images.id
 
   queue {
-    queue_arn = "arn:aws:sqs:us-east-1:015283627155:edge-ai-phedit-demo-queue"
+    queue_arn = aws_sqs_queue.image_jobs.arn
     events    = ["s3:ObjectCreated:*"]
 
     filter_suffix = ".jpg"

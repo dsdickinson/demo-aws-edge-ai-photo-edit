@@ -3,6 +3,8 @@ import requests
 import logging
 import os
 import time
+import json
+import uuid6
 
 logger = logging.getLogger("worker")
 
@@ -22,43 +24,51 @@ class JetsonWorker:
         )
 
     def process_message(self, message):
-        image_key = message["Body"]
-        bucket = self.config["aws"]["s3"]["bucket_name"]
-        download_dir = self.config["aws"]["s3"]["download_dir"]
-        local_path = os.path.join(download_dir, os.path.basename(image_key))
+       body = json.loads(message["Body"])
 
-        logger.info(f"Downloading {image_key}")
-        self.s3.download_file(bucket, image_key, local_path)
+       if body.get("Event") == "s3:TestEvent":
+          logger.info("Ignoring S3 test event")
+       else:
+          record = body["Records"][0]
+          bucket = record["s3"]["bucket"]["name"]
+          key = record["s3"]["object"]["key"]
+          image_id = uuid6.uuid7()
+          image_name = key.split("/")[-1]
 
-        tags = self.inference.run(local_path)
-        title = f"{tags[0].title()}"
-        description = f"A fine art wildlife photograph featuring {', '.join(tags)}."
-        inference_time = "XXX"
-        gpu_available = "XXX"
-        status = "XXX"
-
-        metadata = {
-            "image_id": image_key,
-            "title": title,
-            "description": description,
-            "tags": tags,
-            "inference_time_ms": inference_time,
-            "gpu": gpu_available,
-            "status": status
-        }
-
-        api_endpoint = self.config["aws"]["api"]["endpoint"]
-
-        logger.info(f"Posting metadata for {image_key}")
-        response = requests.post(api_endpoint, json=metadata)
-        response.raise_for_status()
-
-        self.sqs.delete_message(
-            QueueUrl=self.config["aws"]["sqs"]["queue_url"],
-            ReceiptHandle=message["ReceiptHandle"]
-        )
-
-        logger.info(f"Successfully processed {image_key}")
+          #bucket = self.config["aws"]["s3"]["bucket_name"]
+          download_dir = self.config["aws"]["s3"]["download_dir"]
+          local_path = os.path.join(download_dir, os.path.basename(image_name))
+  
+          logger.info(f"Downloading {bucket} {image_name} {local_path}")
+          self.s3.download_file(bucket, image_name, local_path)
+  
+          tags = self.inference.run(local_path)
+          title = f"{tags[0].title()}"
+          description = f"A fine art wildlife photograph featuring {', '.join(tags)}."
+ #         inference_time = "XXX"
+ #         gpu_available = "XXX"
+ #         status = "XXX"
+  
+          metadata = {
+              "id": image_id,
+              "name": image_name,
+              "title": title,
+              "description": description,
+              "tags": tags
+          }
+  
+          api_endpoint = self.config["aws"]["api"]["endpoint"]
+  
+          logger.info(f"Posting metadata for {image_name}")
+          response = requests.post(api_endpoint, json=metadata)
+          response.raise_for_status()
+  
+          self.sqs.delete_message(
+              QueueUrl=self.config["aws"]["sqs"]["queue_url"],
+              ReceiptHandle=message["ReceiptHandle"]
+          )
+  
+          logger.info(f"Successfully processed {image_name}")
 
     def run(self):
         queue_url = self.config["aws"]["sqs"]["queue_url"]
@@ -69,6 +79,8 @@ class JetsonWorker:
                 MaxNumberOfMessages=self.config["aws"]["sqs"]["max_messages"],
                 WaitTimeSeconds=self.config["aws"]["sqs"]["wait_time_seconds"]
             )
+
+            logger.info(f"SQS response: {response}")
 
             messages = response.get("Messages", [])
 

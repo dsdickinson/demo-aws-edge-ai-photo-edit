@@ -2,10 +2,10 @@ resource "aws_dynamodb_table" "image_metadata" {
   name         = "${var.project_name}-metadata"
   billing_mode = "PAY_PER_REQUEST"
 
-  hash_key = "image_id"
+  hash_key = "id"
 
   attribute {
-    name = "image_id"
+    name = "id"
     type = "S"
   }
 }

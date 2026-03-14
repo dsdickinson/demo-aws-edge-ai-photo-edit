@@ -16,7 +16,7 @@ aws:
     download_dir: /tmp
 
   api:
-    endpoint: https://sg1ubi1o8i.execute-api.us-east-1.amazonaws.com
+    endpoint: https://sg1ubi1o8i.execute-api.us-east-1.amazonaws.com/metadata
     timeout_seconds: 5
 
 inference:

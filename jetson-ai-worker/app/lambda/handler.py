@@ -38,7 +38,7 @@ def lambda_handler(event, context):
         validate_payload(body)
 
         item = {
-            "image_id": body["image_id"],
+            "id": body["id"],
             "tags": body["tags"],
             "title": body.get("title", ""),
             "description": body.get("description", ""),

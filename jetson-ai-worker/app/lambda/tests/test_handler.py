@@ -14,7 +14,7 @@ def test_lambda_success(mock_table):
 
     event = {
         "body": json.dumps({
-            "image_id": "img123.jpg",
+            "id": "img123.jpg",
             "tags": ["heron"]
         })
     }
@@ -40,7 +40,7 @@ def test_lambda_missing_field():
 def test_lambda_invalid_tags():
     event = {
         "body": json.dumps({
-            "image_id": "img123.jpg",
+            "id": "img123.jpg",
             "tags": "not-a-list"
         })
     }

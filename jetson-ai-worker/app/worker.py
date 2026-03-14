@@ -56,11 +56,14 @@ class JetsonWorker:
               "description": description,
               "tags": tags
           }
+
+          # Do this to serialize the uuid
+          metadata_str = json.dumps(metadata, default=lambda x: str(x))
   
           api_endpoint = self.config["aws"]["api"]["endpoint"]
   
           logger.info(f"Posting metadata for {image_name}")
-          response = requests.post(api_endpoint, json=metadata)
+          response = requests.post(api_endpoint, json=metadata_str)
           response.raise_for_status()
   
           self.sqs.delete_message(

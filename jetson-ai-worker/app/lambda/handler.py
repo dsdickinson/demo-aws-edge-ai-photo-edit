@@ -18,7 +18,7 @@ logger.setLevel(logging.INFO)
 
 
 def validate_payload(body):
-    required_fields = ["image_id", "tags"]
+    required_fields = ["id", "tags"]
 
     for field in required_fields:
         if field not in body:

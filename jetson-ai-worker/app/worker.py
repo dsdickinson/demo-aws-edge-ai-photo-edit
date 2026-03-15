@@ -59,6 +59,7 @@ class JetsonWorker:
 
           # Do this to serialize the uuid
           metadata_str = json.dumps(metadata, default=lambda x: str(x))
+          logger.info(f"Metadata string: {metadata_str}")
   
           api_endpoint = self.config["aws"]["api"]["endpoint"]
   

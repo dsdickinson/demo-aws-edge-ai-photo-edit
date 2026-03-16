@@ -29,11 +29,12 @@ def validate_payload(body):
 
 
 def lambda_handler(event, context):
+    logger.info(f"Incoming event: {event}")
     try:
         logger.info(f"Incoming event: {json.dumps(event)}")
 
         # API Gateway proxy integration
-        body = event.get("body", "{}")
+        body = json.loads(event.get("body", "{}"))
 
         validate_payload(body)
 
@@ -42,7 +43,7 @@ def lambda_handler(event, context):
             "name": body["name"],
             "title": body.get("title", ""),
             "description": body.get("description", ""),
-            "tags": body["tags"],
+            "tags": body.get("tags", ""),
             "created_at": datetime.utcnow().isoformat(),
             "request_id": context.aws_request_id
         }
@@ -51,6 +52,7 @@ def lambda_handler(event, context):
 
         return {
             "statusCode": 200,
+            "headers": { "Content-Type": "application/json" },
             "body": json.dumps({"message": "Metadata stored successfully"})
         }
 

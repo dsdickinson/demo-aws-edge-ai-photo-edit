@@ -3,7 +3,7 @@ variable "aws_region" {
 }
 
 variable "project_name" {
-  default = "edge-ai-phedit-demo"
+  default = "demo-aws-edge-ai-photo-edit"
 }
 
 variable "lambda_function_name" {

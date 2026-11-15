@@ -7,12 +7,12 @@ aws:
   region: us-east-1
 
   sqs:
-    queue_url: https://sqs.us-east-1.amazonaws.com/015283627155/edge-ai-phedit-demo-queue
+    queue_url: https://sqs.us-east-1.amazonaws.com/015283627155/demo-aws-edge-ai-photo-edit-queue
     wait_time_seconds: 10
     max_messages: 1
 
   s3:
-    bucket_name: edge-ai-phedit-demo-raw-images
+    bucket_name: demo-aws-edge-ai-photo-edit-raw-images
     download_dir: /tmp
 
   api:

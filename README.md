@@ -74,7 +74,7 @@ flowchart TD
 
 ### Flow Breakdown
 
-1. **Upload**: A `.jpg` image is uploaded to the S3 bucket (`edge-ai-phedit-demo-raw-images`).
+1. **Upload**: A `.jpg` image is uploaded to the S3 bucket (`demo-aws-edge-ai-photo-edit-raw-images`).
 2. **Notify**: An S3 bucket notification automatically sends an `s3:ObjectCreated:*` message containing the bucket and object key to the SQS queue.
 3. **Poll**: The edge worker long-polls SQS (`WaitTimeSeconds: 10`) for incoming jobs.
 4. **Download**: The worker fetches the image directly from S3 into a local working directory (`/tmp`).
@@ -152,12 +152,26 @@ cd ../../../
 
 ### 2. Deploy Infrastructure with Terraform
 
-Initialize and apply the Terraform configuration to provision all AWS resources:
+#### (Optional but Recommended) Bootstrap Remote State Backend
+If you want to store your Terraform state in an encrypted S3 bucket with DynamoDB locking rather than local disk:
+```bash
+cd aws-infra/terraform/bootstrap
+terraform init
+terraform apply
+cd ..
+```
+Then initialize the main configuration with state migration:
+```bash
+terraform init -migrate-state
+```
+
+#### Provision Main Stack
+Provision all application resources (S3 raw image storage, SQS, API Gateway, Lambda, DynamoDB):
 
 ```bash
 cd aws-infra/terraform
 
-# Initialize Terraform providers
+# Initialize Terraform providers (or use -migrate-state if migrating)
 terraform init
 
 # Review execution plan
@@ -175,8 +189,8 @@ Apply complete! Resources: 14 added, 0 changed, 0 destroyed.
 Outputs:
 
 api_endpoint  = "https://<api-id>.execute-api.us-east-1.amazonaws.com"
-s3_bucket     = "edge-ai-phedit-demo-raw-images"
-sqs_queue_url = "https://sqs.us-east-1.amazonaws.com/<account-id>/edge-ai-phedit-demo-queue"
+s3_bucket     = "demo-aws-edge-ai-photo-edit-raw-images"
+sqs_queue_url = "https://sqs.us-east-1.amazonaws.com/<account-id>/demo-aws-edge-ai-photo-edit-queue"
 ```
 
 > [!NOTE]
@@ -196,12 +210,12 @@ aws:
   region: us-east-1   # Match your terraform aws_region
 
   sqs:
-    queue_url: https://sqs.us-east-1.amazonaws.com/<account-id>/edge-ai-phedit-demo-queue
+    queue_url: https://sqs.us-east-1.amazonaws.com/<account-id>/demo-aws-edge-ai-photo-edit-queue
     wait_time_seconds: 10
     max_messages: 1
 
   s3:
-    bucket_name: edge-ai-phedit-demo-raw-images
+    bucket_name: demo-aws-edge-ai-photo-edit-raw-images
     download_dir: /tmp
 
   api:
@@ -311,7 +325,7 @@ Once both the cloud infrastructure and edge worker are active, verify the pipeli
 Upload any sample `.jpg` image to your raw images bucket:
 
 ```bash
-aws s3 cp jetson-ai-worker/app/models/bus.jpg s3://edge-ai-phedit-demo-raw-images/bus.jpg
+aws s3 cp jetson-ai-worker/app/models/bus.jpg s3://demo-aws-edge-ai-photo-edit-raw-images/bus.jpg
 ```
 
 ### 2. Observe the Worker Logs
@@ -319,7 +333,7 @@ aws s3 cp jetson-ai-worker/app/models/bus.jpg s3://edge-ai-phedit-demo-raw-image
 Within seconds, the worker receives the SQS notification, downloads the image, executes inference, and sends the metadata:
 
 ```text
-[INFO] worker: Downloading edge-ai-phedit-demo-raw-images bus.jpg /tmp/bus.jpg
+[INFO] worker: Downloading demo-aws-edge-ai-photo-edit-raw-images bus.jpg /tmp/bus.jpg
 [INFO] inference: Detected labels: {'bus', 'person'}
 [INFO] worker: Metadata string: {"id": "018e4...", "name": "bus.jpg", "title": "Bus", "description": "A fine art wildlife photograph featuring bus, person.", "tags": ["bus", "person"]}
 [INFO] worker: Posting metadata for bus.jpg
@@ -446,7 +460,7 @@ To remove all provisioned AWS resources and prevent recurring charges:
 
 1. **Empty the S3 bucket**:
    ```bash
-   aws s3 rm s3://edge-ai-phedit-demo-raw-images --recursive
+   aws s3 rm s3://demo-aws-edge-ai-photo-edit-raw-images --recursive
    ```
 
 2. **Destroy infrastructure with Terraform**:

@@ -1,6 +1,30 @@
+# Python / Virtual Environment
 OLD/
 bin/
 lib/
-pyvenv.cfg
-__pycache__/
+include/
 share/
+pyvenv.cfg
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Terraform local state and runtime files
+.terraform/
+.terraform.*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfvars
+*.tfvars.json
+
+# YOLO / Ultralytics local run artifacts
+runs/

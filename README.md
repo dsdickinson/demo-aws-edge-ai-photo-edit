@@ -93,6 +93,11 @@ flowchart TD
 ├── README.md                           # Project documentation
 ├── aws-infra/
 │   └── terraform/                      # Infrastructure as Code (Terraform)
+│       ├── backend.tf                  # Remote state S3 backend configuration
+│       ├── bootstrap/                  # Remote state backend bootstrapper (S3 + DynamoDB)
+│       │   ├── main.tf                 # State bucket and DynamoDB locking table resources
+│       │   ├── outputs.tf              # State bucket and table outputs
+│       │   └── variables.tf            # Bootstrap configuration variables
 │       ├── apigateway.tf               # API Gateway HTTP API configuration
 │       ├── dynamodb.tf                 # DynamoDB metadata table
 │       ├── iam.tf                      # Lambda execution & IAM policies
